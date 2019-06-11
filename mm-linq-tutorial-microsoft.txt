@@ -1,0 +1,138 @@
+class LINQQueryExpressions
+{
+	static void Main()
+	{
+		// Specify the data source.
+		int[] scores = new int[] { 97, 92, 81, 60 };
+		// Define the query expression.
+		IEnumerable<int> scoreQuery =
+			from score in scores
+			where score > 80
+			select score;
+		// Execute the query.
+		foreach (int i in scoreQuery)
+		{
+			Console.Write(i + " ");
+		}
+	}
+}
+// Output: 97 92 81
+
+***************************
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LQ_Pagina_8
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            /*
+            // Specify the data source.
+            int[] scores = new int[] { 97, 92, 81, 60 };
+            // Define the query expression.
+            IEnumerable<int> scoreQuery = from score in scores where score > 80 select score;
+            // Execute the query.
+            foreach (int i in scoreQuery)
+            {
+                Console.Write(i + " ");
+                Console.WriteLine();
+            }
+            */
+            string[] mensajes= {
+                "hola mundo",
+                "con los dedos de las manos, con los dedos de los pies",
+                "buenas noches a todos",
+                "café con avellanas",
+                "cada vez que se aparece frente a mí tu anatomía",
+                "tengo que comprarme un pc más potente",
+                "visual studio consume muchos recursos",
+                "quiero entrar a las 8",
+                "media hora de fuerza, una hora de cardio",
+                "hay una cosa que te quiero decir",
+                "sin tele y sin cerveza homer pierde la cabeza",
+                "a que te meto al water"
+            };
+            
+            Stopwatch sw = new Stopwatch(); // Creación del Stopwatch.
+            sw.Start(); // Iniciar la medición.
+            IEnumerable<string> mensajesConQue = from mensaje in mensajes where mensaje.Contains("que") select mensaje;
+            foreach(string m in mensajesConQue)
+            {
+                Console.WriteLine(m);
+            }
+            sw.Stop(); // Detener la medición.
+            Console.WriteLine("Time elapsed: {0}", sw.Elapsed.ToString("hh\\:mm\\:ss\\.fff")); // Mostrar el tiempo transcurriodo con un formato hh:mm:ss.000
+            
+            /*
+            Stopwatch sw = new Stopwatch(); // Creación del Stopwatch.
+            sw.Start(); // Iniciar la medición.
+            List<string> mensajesConQue = new List<string>();
+            //IEnumerable<string> mensajesConQue = new List<string>();
+            foreach (string m in mensajes)
+            {
+                if (m.Contains("que"))
+                {
+                    mensajesConQue.Add(m);
+                }
+            }
+            foreach (string m in mensajesConQue)
+            {
+                Console.WriteLine(m);
+            }
+            sw.Stop(); // Detener la medición.
+            Console.WriteLine("Time elapsed: {0}", sw.Elapsed.ToString("hh\\:mm\\:ss\\.fff")); // Mostrar el tiempo transcurriodo con un formato hh:mm:ss.000
+            */
+            Console.ReadKey();
+ 
+        }
+    }
+}
+
+*****************************************************************************
+
+Forcing Immediate Execution
+
+Examples of such queries are Count , Max , Average , and First
+
+The following query returns a count of the even numbers in the source array:
+
+var evenNumQuery = from num in numbers
+			where (num % 2) == 0
+			select num;
+
+int evenNumCount = evenNumQuery.Count();
+
+
+To force immediate execution of any query and cache its results, you can call the ToList or ToArray methods.
+
+List<int> numQuery2 =
+	(from num in numbers
+	where (num % 2) == 0
+	select num).ToList();
+	// or like this:
+	// numQuery3 is still an int[]
+	var numQuery3 =
+		(from num in numbers
+		where (num % 2) == 0
+		select num).ToArray();
+
+***********************************************
+
+IEnumerable<T> variables in LINQ Queries
+
+	IEnumerable<Customer> customerQuery =
+		from cust in customers
+		where cust.City == "London"
+		select cust;
+
+		foreach (Customer customer in customerQuery)
+		{
+			Console.WriteLine(customer.LastName + ", " + customer.FirstName);
+		}

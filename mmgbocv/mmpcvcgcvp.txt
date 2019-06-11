@@ -1,0 +1,551 @@
+18
+1
+import numpy as np
+import cv2
+
+
+#Create 300x300 numpy array and 250x250 white rectangle inside it
+rectangle = np.zeros((300, 300), dtype="uint8")
+cv2.rectangle(rectangle, (25, 25), (275, 275), 255, -1)
+cv2.imshow("rectangle", rectangle)
+
+
+#Create 300x300 numpy array and 150 radius white circle inside it
+circle = np.zeros((300, 300), dtype="uint8")
+cv2.circle(circle, (150, 150), 150, 255, -1)
+cv2.imshow("circle", circle)
+
+# perfoming the bitwise operations
+bitwiseAnd = cv2.bitwise_and(rectangle, circle)
+cv2.imshow("AND", bitwiseAnd)
+cv2.waitKey(0)
+
+bitwiseOr = cv2.bitwise_or(rectangle, circle)
+cv2.imshow("OR", bitwiseOr)
+cv2.waitKey(0)
+
+bitwiseXor = cv2.bitwise_xor(rectangle, circle)
+cv2.imshow("XOR", bitwiseXor)
+cv2.waitKey(0)
+
+bitwiseNot = cv2.bitwise_not(rectangle, circle)
+cv2.imshow("Not", bitwiseNot)
+cv2.waitKey(0)
+###########
+19 máscara
+1
+import numpy as np
+import argparse
+import cv2
+
+# fetching the arguments and save in dictionary
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required = True, help = "Enter path to the image")
+args = vars(ap.parse_args())
+
+# loading and converting the image into numpy array
+image = cv2.imread(args["image"])
+cv2.imshow("Original", image)
+cv2.waitKey(0)
+
+# create numpy array filled with zeros with exact width and height of image
+# create a rectangular mask
+mask = np.zeros(image.shape[:2], dtype = "uint8")
+(cX, cY) = (image.shape[1] // 2, image.shape[0] // 2)
+cv2.rectangle(mask, (cX - 75, cY - 75), (cX + 75, cY + 75), 255, -1)
+cv2.imshow("Mask", mask)
+
+masked = cv2.bitwise_and(image, image, mask = mask)
+cv2.imshow(" Masked image", masked)
+cv2.waitKey(0)
+
+
+# create numpy array filled with zeros with exact width and height of image
+# create a circular mask
+mask = np.zeros(image.shape[:2], dtype = "uint8")
+(cX, cY) = (image.shape[1] // 2, image.shape[0] // 2)
+cv2.circle(mask, (cX, cY), 100, 255, -1)
+cv2.imshow("Mask", mask)
+
+masked = cv2.bitwise_and(image, image, mask = mask)
+cv2.imshow(" Masked image", masked)
+cv2.waitKey(0)
+###########
+20 image color channels merging and splitting
+1
+import numpy as np
+import argparse
+import cv2
+
+# fetching the arguments and save in dictionary
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required = True, help = "Enter path to the image")
+args = vars(ap.parse_args())
+
+# loading and converting the image into numpy array
+image = cv2.imread(args["image"])
+#cv2.imshow("Original", image)
+#cv2.waitKey(0)
+
+#split the image based on channels
+(B, G, R) = cv2.split(image)
+
+cv2.imshow("Red", R)
+cv2.imshow("Green", G)
+cv2.imshow("Blue", B)
+cv2.waitKey(0)
+
+
+#alternate method
+zeros = np.zeros(image.shape[:2], dtype = "uint8")
+cv2.imshow("Red", cv2.merge([zeros, zeros, R]))
+cv2.imshow("Green", cv2.merge([zeros, G, zeros]))
+cv2.imshow("Blue", cv2.merge([B, zeros, zeros]))
+cv2.waitKey(0)
+
+#merge back the channels
+merged = cv2.merge([B, G, R])
+cv2.imshow("merged", merged)
+cv2.waitKey(0)
+########
+21 otros espaciones de colores
+1
+import numpy as np
+import argparse
+import cv2
+
+# fetching the arguments and save in dictionary
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required = True, help = "Enter path to the image")
+args = vars(ap.parse_args())
+
+# loading and converting the image into numpy array
+image = cv2.imread(args["image"])
+cv2.imshow("BGR Color Space", image)
+cv2.waitKey(0)
+
+# BGR to GRAY
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+cv2.imshow("GRAY", gray)
+
+# BGR to HSV
+hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+cv2.imshow("HSV", hsv)
+
+# BGR to LAB
+lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+cv2.imshow("LAB", lab)
+
+cv2.waitKey(0)
+#####################
+22 histogramas escala de grises
+1
+from matplotlib import pyplot as plt
+import numpy as np
+import argparse
+import cv2
+
+# fetching the arguments and save in dictionary
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required = True, help = "Enter path to the image")
+args = vars(ap.parse_args())
+
+# loading and converting the image into numpy array
+image = cv2.imread(args["image"])
+
+
+# BGR to GRAY
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+cv2.imshow("GRAY", gray)
+cv2.waitKey(0)
+
+# create the histogram
+hist = cv2.calcHist([gray], [0], None, [256], [0, 256])
+
+#plot the graph
+plt.figure()
+plt.title("Grayscale Histogram")
+plt.xlabel("bins")
+plt.ylabel("No of pixels")
+plt.plot(hist)
+plt.xlim([0, 256])
+plt.show()
+
+cv2.waitKey(0)
+############
+24 histogramas ecualización
+1
+import numpy as np
+import argparse
+import cv2
+
+# fetching the arguments and save in dictionary
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required = True, help = "Enter path to the image")
+args = vars(ap.parse_args())
+
+# loading and converting the image into numpy array
+image = cv2.imread(args["image"])
+
+
+# BGR to GRAY
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+eq = cv2.equalizeHist(gray)
+cv2.imshow("Normal and Equilized",np.hstack([gray, eq]))
+cv2.waitKey(0)
+#########
+25 image blurring
+1
+import numpy as np
+import argparse
+import cv2
+
+# fetching the arguments and save in dictionary
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required = True, help = "Enter path to the image")
+args = vars(ap.parse_args())
+
+# loading and converting the image into numpy array
+image = cv2.imread(args["image"])
+
+#average blurring
+blurred = np.hstack([
+	cv2.blur(image, (3,3)),
+	cv2.blur(image, (5,5)),
+	cv2.blur(image, (7,7))])
+
+cv2.imshow("averaged blurr", blurred)
+cv2.waitKey(0)
+
+#gaussian blurring
+blurred = np.hstack([
+	cv2.GaussianBlur(image, (3,3), 0),
+	cv2.GaussianBlur(image, (5,5), 0),
+	cv2.GaussianBlur(image, (7,7), 0)])
+
+cv2.imshow("Gaussian blurr", blurred)
+cv2.waitKey(0)
+
+#median blurring
+blurred = np.hstack([
+	cv2.medianBlur(image, 3),
+	cv2.medianBlur(image, 5),
+	cv2.medianBlur(image, 7)])
+
+cv2.imshow("Median blurr", blurred)
+cv2.waitKey(0)
+
+#bilateral blurring
+blurred = np.hstack([
+	cv2.bilateralFilter(image, 3, 21, 21),
+	cv2.bilateralFilter(image, 5, 31, 31),
+	cv2.bilateralFilter(image, 7, 41, 41)])
+
+cv2.imshow("bilateral blurr", blurred)
+cv2.waitKey(0)
+####################
+26 image threshold
+1
+import numpy as np
+import argparse
+import cv2
+
+# fetching the arguments and save in dictionary
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required = True, help = "Enter path to the image")
+args = vars(ap.parse_args())
+
+# loading and converting the image into numpy array
+image = cv2.imread(args["image"])
+
+# convert image to greyscale
+image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# implement gaussian blurr
+blurred = cv2.GaussianBlur(image, (5,5), 0)
+
+cv2.imshow("Gaussian blurr", blurred)
+
+#simple Thresholding using binary
+(T, thresh) = cv2.threshold(blurred, 155, 255, cv2.THRESH_BINARY)
+cv2.imshow("Threshold Binary", thresh)
+
+#simple Thresholding using inv binary
+(T, threshInv) = cv2.threshold(blurred, 155, 255, cv2.THRESH_BINARY_INV)
+cv2.imshow("Threshold Inv Binary", threshInv)
+
+cv2.imshow("Only Coins", cv2.bitwise_and(image, image, mask = threshInv))
+
+
+#adaptive thresholding using mean
+thresh = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 11, 4)
+cv2.imshow("Adaptive mean", thresh)
+
+#adaptive thresholding using gaussian
+thresh = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 4)
+cv2.imshow("Adaptive gaussian", thresh)
+
+cv2.waitKey(0)
+#########
+27 detección de gradiente de imagen
+1
+import numpy as np
+import argparse
+import cv2
+
+# fetching the arguments and save in dictionary
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required = True, help = "Enter path to the image")
+args = vars(ap.parse_args())
+
+# loading and converting the image into numpy array
+image = cv2.imread(args["image"])
+
+# convert image to greyscale
+image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# laplace gradient detection
+lap = cv2.Laplacian(image, cv2.CV_64F)
+
+#convert back to 8 bit unsigned int
+lap = np.uint8(np.absolute(lap))
+
+cv2.imshow("Laplace Gradient Detection", lap)
+
+
+# Sobel X and Y
+sobelX = cv2.Sobel(image, cv2.CV_64F, 1, 0)
+sobelY = cv2.Sobel(image, cv2.CV_64F, 0, 1)
+
+#convert back to 8 bit unsigned int
+sobelX = np.uint8(np.absolute(sobelX))
+sobelY = np.uint8(np.absolute(sobelY))
+
+sobelCombined = cv2.bitwise_or(sobelX, sobelY)
+cv2.imshow("Sobel X", sobelX)
+cv2.imshow("Sobel Y", sobelY)
+cv2.imshow("Sobel Combined", sobelCombined)
+
+cv2.waitKey(0)
+#########
+28 detección de borde astuto
+1
+import numpy as np
+import argparse
+import cv2
+
+# fetching the arguments and save in dictionary
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required = True, help = "Enter path to the image")
+args = vars(ap.parse_args())
+
+# loading and converting the image into numpy array
+image = cv2.imread(args["image"])
+
+# convert image to greyscale
+image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# implement gaussian blurr
+blurred = cv2.GaussianBlur(image, (5,5), 0)
+
+cv2.imshow("Gaussian blurr", blurred)
+
+canny = cv2.Canny(blurred, 30, 150)
+cv2.imshow("Canny Edge Detected", canny)
+cv2.waitKey(0)
+##########
+29 contorno/perímetro de imágenes
+1
+import numpy as np
+import argparse
+import cv2
+
+# fetching the arguments and save in dictionary
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required = True, help = "Enter path to the image")
+args = vars(ap.parse_args())
+
+# loading and converting the image into numpy array
+image = cv2.imread(args["image"])
+
+# convert image to greyscale
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# implement gaussian blurr
+blurred = cv2.GaussianBlur(gray, (15,15), 0)
+
+cv2.imshow("Gaussian blurr", blurred)
+
+canny = cv2.Canny(blurred, 30, 150)
+cv2.imshow("Canny Edge Detected", canny)
+
+# finding the contours, counting and marking them
+(_, cnts, _) = cv2.findContours(canny.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+print("The number of coins in the image is : {}".format(len(cnts)))
+
+#create a copy of the image
+coins = image.copy()
+
+# draw the contours in the actual color image copy
+cv2.drawContours(coins, cnts, -1, (0, 255, 0), 2)
+cv2.imshow("Contours", coins)
+
+cv2.waitKey(0)
+##########
+30 detección de imagen
+1
+from PIL import Image
+import face_recognition
+import numpy as np
+import argparse
+import cv2
+
+
+# fetching the arguments and save in dictionary
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required = True, help = "Enter path to the image")
+args = vars(ap.parse_args())
+
+# loading and converting the image into numpy array
+image = cv2.imread(args["image"])
+
+# Find all the faces in the image using the library
+face_locations = face_recognition.face_locations(image)
+
+# printing the number of items in the array
+print("I found {} face(s) in this photograph".format(len(face_locations)))
+
+for face_location in face_locations:
+
+	#print location of each face in this image
+	top, right, bottom, left = face_location
+	print("A face is located at pixel location Top: {}, Left: {}, Bottom: {}, Right: {}".format(top, left, bottom, right))
+
+	#access and show each face in the image
+	face_image = image[top:bottom, left:right]
+	pil_image = Image.fromarray(face_image)
+	pil_image.show()
+###################
+31 reconocimiento de imagen usando ml
+1
+import face_recognition
+from PIL import Image, ImageDraw
+
+# This is an example of running face recognition on a single image
+# and drawing a box around each person that was identified.
+
+# Load a sample picture and learn how to recognize it.
+una_image = face_recognition.load_image_file("una.jpg")
+una_face_encoding = face_recognition.face_encodings(una_image)[0]
+
+# Load a second sample picture and learn how to recognize it.
+otra_image = face_recognition.load_image_file("otra.jpg")
+otra_face_encoding = face_recognition.face_encodings(otra_image)[0]
+
+# Create arrays of known face encodings and their names
+known_face_encodings = [
+    una_face_encoding,
+    otra_face_encoding
+]
+known_face_names = [
+    "una imagen",
+    "otra imagen"
+]
+
+# Load an image with an unknown face
+unknown_image = face_recognition.load_image_file("two_people.jpg")
+
+# Find all the faces and face encodings in the unknown image
+face_locations = face_recognition.face_locations(unknown_image)
+face_encodings = face_recognition.face_encodings(unknown_image, face_locations)
+
+# Convert the image to a PIL-format image so that we can draw on top of it with the Pillow library
+# See http://pillow.readthedocs.io/ for more about PIL/Pillow
+pil_image = Image.fromarray(unknown_image)
+# Create a Pillow ImageDraw Draw instance to draw with
+draw = ImageDraw.Draw(pil_image)
+
+# Loop through each face found in the unknown image
+for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
+    # See if the face is a match for the known face(s)
+    matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+
+    name = "Unknown"
+
+    # If a match was found in known_face_encodings, just use the first one.
+    if True in matches:
+        first_match_index = matches.index(True)
+        name = known_face_names[first_match_index]
+
+    # Draw a box around the face using the Pillow module
+    draw.rectangle(((left, top), (right, bottom)), outline=(0, 0, 255))
+
+    # Draw a label with a name below the face
+    text_width, text_height = draw.textsize(name)
+    draw.rectangle(((left, bottom - text_height - 10), (right, bottom)), fill=(0, 0, 255), outline=(0, 0, 255))
+    draw.text((left + 6, bottom - text_height - 5), name, fill=(255, 255, 255, 255))
+
+
+# Remove the drawing library from memory as per the Pillow docs
+del draw
+
+# Display the resulting image
+pil_image.show()
+
+# You can also save a copy of the new image to disk if you want by uncommenting this line
+# pil_image.save("image_with_boxes.jpg")
+#########
+32 ocr usando pytesseract
+1
+# import the necessary packages
+from PIL import Image
+import pytesseract
+import argparse
+import cv2
+import os
+
+# construct the argument parse and parse the arguments
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required=True,
+	help="path to input image to be OCR'd")
+ap.add_argument("-p", "--preprocess", type=str, default="thresh",
+	help="type of preprocessing to be done")
+args = vars(ap.parse_args())
+
+# load the example image and convert it to grayscale
+image = cv2.imread(args["image"])
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+cv2.imshow("Image", gray)
+
+# check to see if we should apply thresholding to preprocess the
+# image
+if args["preprocess"] == "thresh":
+	gray = cv2.threshold(gray, 0, 255,
+		cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+
+# make a check to see if median blurring should be done to remove
+# noise
+elif args["preprocess"] == "blur":
+	gray = cv2.medianBlur(gray, 3)
+
+# write the grayscale image to disk as a temporary file so we can
+# apply OCR to it
+filename = "{}.png".format(os.getpid())
+cv2.imwrite(filename, gray)
+
+# load the image as a PIL/Pillow image, apply OCR, and then delete
+# the temporary file
+text = pytesseract.image_to_string(Image.open(filename))
+os.remove(filename)
+print(text)
+
+# show the output images
+# cv2.imshow("Image", image)
+cv2.imshow("Output", gray)
+cv2.waitKey(0)
+
+# USAGE
+# python3 ocr.py --image ../opencv/example_01.png 
+# python3 ocr.py --image ../opencv/example_02.png  --preprocess blur

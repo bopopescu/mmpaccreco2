@@ -1,0 +1,39 @@
+from PIL import Image
+import numpy as np
+
+im1 = np.array(Image.open("myimage1.png"))
+im2 = np.array(Image.open("myimage1.png"))
+difference = im1 - im2
+if np.all(difference == 0): # more readable than 'not np.any'
+  print("The images are the same")
+else:
+  Image.fromarray(
+      difference[:,:,:3].astype(np.uint8) # alpha will be generally zero
+
+***********************************************************
+
+im1 = np.array(Image.open("myimage1.png")).astype(np.int) # cast to ints
+im2 = np.array(Image.open("myimage1.png")).astype(np.int)
+difference = im1 - im2 # if you do this with uint8 arrays the negative values will wrap i.e. (0, 2, 2) - (1, 4, 2) => (255, 254, 0)
+diff = np.where(np.abs(difference) > THRSHLD)[0] # np.where will return a tuple of 1D arrays
+diff_count = len(diff) # react if more than N pixel_colours have changed enough
+
+***********************************************************
+
+https://pysource.com/2018/07/19/check-if-two-images-are-equal-with-opencv-and-python/
+
+# 1) Check if 2 images are equals
+if original.shape == duplicate.shape:
+print("The images have same size and channels")
+difference = cv2.subtract(original, duplicate)
+b, g, r = cv2.split(difference)
+if cv2.countNonZero(b) == 0 and cv2.countNonZero(g) == 0 and cv2.countNonZero(r) == 0:
+print("The images are completely Equal")
+
+**************************
+
+https://codeday.me/es/qa/20190118/101423.html
+
+******************************************************************
+
+https://pybaq.co/blog/reconocimiento-de-rostros-en-una-microcomputadora/
